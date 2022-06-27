@@ -5,35 +5,28 @@
 (Используйте - для обозначения зачеркнутой буквы)
 """
 
-from itertools import combinations
 from typing import Set
 
 
-def bananas(s: str) -> Set[str]:
-    """find all «banana» occurrences in input string"""
-    result = []
-    base = 'banana'
+def bananas(s: str, obj: str = 'banana') -> Set[str]:
+    """find all «banana» occurrences in input string. recursive approach"""
+    output = set()
 
-    skipped_letters = len(s) - len(base)
-    if skipped_letters == 0:
-        if s == base:
-            result.append(base)
-        return set(result)
+    if obj == '':
+        output.add(''.rjust(len(s), '-'))
+        return output
 
-    indices = combinations(range(len(s)), skipped_letters)
-    for ind in indices:
-        res = []
-        for i, v in enumerate(s):
-            if i not in ind:
-                res.append(v)
+    for i in range(len(s)):
+        if obj[0] == s[i]:
+            left_part = ''.rjust(i, '-') + s[i]
+
+            if s[i + 1:] == '' and obj[1:] == '':
+                output.add(left_part)
             else:
-                res.append('-')
-
-        output = ''.join(res)
-        if output.replace("-", "") == base:
-            result.append(output)
-
-    return set(result)
+                right_parts = bananas(s[i + 1:], obj[1:])
+                for right_part in right_parts:
+                    output.add(left_part + right_part)
+    return output
 
 
 assert bananas("banann") == set()
@@ -44,3 +37,7 @@ assert bananas("bbananana") == {
 }
 assert bananas("bananaaa") == {"banan-a-", "banana--", "banan--a"}
 assert bananas("bananana") == {"ban--ana", "ba--nana", "bana--na", "b--anana", "banana--", "banan--a"}
+
+assert isinstance(bananas("bbbbananabbbbnnanananananannsssaaaannannnannaaassss"), set)
+assert len(bananas("bbbbananabbbbnnanananananannsssaaaannannnannaaassss")) > 1000
+
