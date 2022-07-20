@@ -35,7 +35,7 @@ services:
 
   postgres_db:
     container_name: postgres_db
-    image: postgres:latest
+    image: postgres:14
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:

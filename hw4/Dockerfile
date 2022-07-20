@@ -1,6 +1,11 @@
 ## Базовый образ для сборки
 FROM python:3.9.10-slim
 
+# postgresql for macbook m1
+RUN apt-get update -qq
+RUN apt-get install -y gcc python3-dev libpq-dev postgresql-client-common postgresql-common
+RUN pip install psycopg2==2.9.3
+
 # Указываем рабочую директорию
 WORKDIR /usr/src/app
 
