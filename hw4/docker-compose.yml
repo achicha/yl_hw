@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - example.env
+    networks:
+      - my_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres_db:
+        condition: service_healthy
+
+  redis:
+    container_name: redis
+    image: redis:6.2.6-alpine
+    expose:
+      - 6379
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 20s
+      retries: 100
+
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - example.env
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U hw" ]
+      interval: 5s
+      timeout: 20s
+      retries: 100
+
+networks:
+  my_network:
+
+volumes:
+  postgres_data:
