@@ -17,12 +17,12 @@ class AuthService(ServiceMixin):
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
         return payload.get('email')
 
-    def create_token(self, email):
+    @staticmethod
+    def create_token(email):
         """create new token"""
         exp_time = dt.utcnow() + td(minutes=JWT_EXPIRATION_TIME)
         to_encode = {'email': email, "exp": exp_time}
         token = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
-        self.cache.set(key=email, value=token, expire=CACHE_EXPIRE_IN_SECONDS)
         return token
 
     def get_active_token(self, email) -> str:
