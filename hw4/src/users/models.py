@@ -6,7 +6,7 @@ __all__ = ("User",)
 
 
 class User(SQLModel, table=True):
-    __table_args__ = (UniqueConstraint('email'),)
+    __table_args__ = (UniqueConstraint('email'), UniqueConstraint('username'))
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(nullable=False)
     email: str = Field(nullable=False)

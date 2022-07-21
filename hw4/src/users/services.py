@@ -4,14 +4,15 @@ from sqlmodel import Session
 from fastapi import Depends
 
 from src.db import AbstractCache, get_cache, get_session
-from src.services import ServiceMixin
-from src.models.user import User
-from src.core.verify import get_password_hash, verify_password
-from src.api.v1.schemas.auth import UserBase, UserSignup, Token
+from src.core.mixins import ServiceMixin
+from src.users.models import User
+from src.users.hashing import get_password_hash, verify_password, create_token
+from src.users.schema import UserBase, UserSignup
 
 
 class UserService(ServiceMixin):
-    def create(self, user: UserSignup) -> User:
+    def register_new_user(self, user: UserSignup) -> User:
+        """add new user to db"""
         new_user = User(
             username=user.username,
             email=user.email,
@@ -22,20 +23,9 @@ class UserService(ServiceMixin):
         self.session.refresh(new_user)
         return new_user
 
-    def login(self, user: UserBase) -> Union[str, Token]:
-        # get user from db
-        user_exist = self.session.query(User).filter(User.username == user.username).first()
-        if not user_exist or verify_password(user.password, user_exist.password_hash):
-            return None
-
-        # create refresh token
-
-
-        # create access token
-
-        return Token(
-
-        )
+    def get_current_user(self, email: str) -> Union[None, User]:
+        """verify that email already exist in our DB"""
+        return self.session.query(User).filter(User.email == email).first()
 
 
 @lru_cache()

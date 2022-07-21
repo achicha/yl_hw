@@ -13,3 +13,6 @@ alembic upgrade head
 alembic revision --autogenerate -m "first commit"
 alembic upgrade head
 ```
+
+### Links
+- [fastapi guide](https://www.jetbrains.com/pycharm/guide/tutorials/fastapi-aws-kubernetes/auth_jwt/)

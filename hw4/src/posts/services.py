@@ -5,10 +5,10 @@ from typing import Optional
 from fastapi import Depends
 from sqlmodel import Session
 
-from src.api.v1.schemas import PostCreate, PostModel
+from src.posts.schema import PostCreate, PostModel
 from src.db import AbstractCache, get_cache, get_session
-from src.models import Post
-from src.services import ServiceMixin
+from src.posts.models import Post
+from src.core.mixins import ServiceMixin
 
 __all__ = ("PostService", "get_post_service")
 

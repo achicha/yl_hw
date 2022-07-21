@@ -3,17 +3,16 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.api.v1.schemas import PostCreate, PostListResponse, PostModel
-from src.services import PostService, get_post_service
+from src.posts.schema import PostCreate, PostListResponse, PostModel
+from src.posts.services import PostService, get_post_service
 
-router = APIRouter()
+router = APIRouter(tags=["posts"])
 
 
 @router.get(
     path="/",
     response_model=PostListResponse,
     summary="Список постов",
-    tags=["posts"],
 )
 def post_list(
     post_service: PostService = Depends(get_post_service),
@@ -29,7 +28,6 @@ def post_list(
     path="/{post_id}",
     response_model=PostModel,
     summary="Получить определенный пост",
-    tags=["posts"],
 )
 def post_detail(
     post_id: int, post_service: PostService = Depends(get_post_service),
@@ -45,7 +43,6 @@ def post_detail(
     path="/",
     response_model=PostModel,
     summary="Создать пост",
-    tags=["posts"],
 )
 def post_create(
     post: PostCreate, post_service: PostService = Depends(get_post_service),

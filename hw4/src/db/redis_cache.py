@@ -1,3 +1,4 @@
+import redis
 from typing import NoReturn, Optional, Union
 
 from src.core import config
@@ -11,12 +12,31 @@ class CacheRedis(AbstractCache):
         return self.cache.get(name=key)
 
     def set(
-        self,
-        key: str,
-        value: Union[bytes, str],
-        expire: int = config.CACHE_EXPIRE_IN_SECONDS,
+            self,
+            key: str,
+            value: Union[bytes, str],
+            expire: int = config.CACHE_EXPIRE_IN_SECONDS,
     ):
         self.cache.set(name=key, value=value, ex=expire)
 
     def close(self) -> NoReturn:
         self.cache.close()
+
+
+blocked_access_tokens = CacheRedis(
+    redis.Redis(
+        host=config.REDIS_HOST,
+        port=config.REDIS_PORT,
+        db=1,
+        decode_responses=True,
+    )
+)
+
+active_refresh_tokens = CacheRedis(
+    redis.Redis(
+        host=config.REDIS_HOST,
+        port=config.REDIS_PORT,
+        db=2,
+        decode_responses=True,
+    )
+)
