@@ -18,8 +18,8 @@ class CacheRedis(AbstractCache):
     ):
         self.cache.set(name=key, value=value, ex=expire)
 
-    def remove(self, key: str, value: str):
-        self.cache.lrem(key, 1, value)
+    def remove(self, key: str):
+        self.cache.delete(key)
 
     def close(self) -> NoReturn:
         self.cache.close()

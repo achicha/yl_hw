@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional, Dict
 from functools import lru_cache
 from sqlmodel import Session
 from fastapi import Depends
@@ -28,6 +28,11 @@ class UserService(ServiceMixin):
     def get_current_user(self, email: str) -> Union[None, User]:
         """verify that email already exist in our DB"""
         return self.session.query(User).filter(User.email == email).first()
+
+    def update_info(self, email, user_data: dict) -> Dict:
+        self.session.query(User).filter(User.email == email).update(user_data)
+        self.session.commit()
+        return self.get_current_user(email)
 
     @staticmethod
     def verify_user_password(password, password_hash):
