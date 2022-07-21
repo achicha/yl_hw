@@ -1,4 +1,3 @@
-import redis
 from typing import NoReturn, Optional, Union
 
 from src.core import config
@@ -19,24 +18,8 @@ class CacheRedis(AbstractCache):
     ):
         self.cache.set(name=key, value=value, ex=expire)
 
+    def remove(self, key: str, value: str):
+        self.cache.lrem(key, 1, value)
+
     def close(self) -> NoReturn:
         self.cache.close()
-
-
-blocked_access_tokens = CacheRedis(
-    redis.Redis(
-        host=config.REDIS_HOST,
-        port=config.REDIS_PORT,
-        db=1,
-        decode_responses=True,
-    )
-)
-
-active_refresh_tokens = CacheRedis(
-    redis.Redis(
-        host=config.REDIS_HOST,
-        port=config.REDIS_PORT,
-        db=2,
-        decode_responses=True,
-    )
-)

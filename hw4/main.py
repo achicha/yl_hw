@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from src.posts.api import router as posts_router
 from src.users.api import router as users_router
+from src.auth.api import router as auth_router
 from src.core import config
 from src.db import cache, redis_cache
 
@@ -32,6 +33,16 @@ def startup():
             host=config.REDIS_HOST, port=config.REDIS_PORT, max_connections=10
         )
     )
+    # cache.active_tokens = redis_cache.CacheRedis(
+    #     cache_instance=redis.Redis(
+    #         host=config.REDIS_HOST, port=config.REDIS_PORT, db=1, max_connections=10, decode_responses=True
+    #     )
+    # )
+    # cache.blocked_tokens = redis_cache.CacheRedis(
+    #     cache_instance=redis.Redis(
+    #         host=config.REDIS_HOST, port=config.REDIS_PORT, db=2, max_connections=10, decode_responses=True
+    #     )
+    # )
 
 
 @app.on_event("shutdown")
@@ -41,8 +52,9 @@ def shutdown():
 
 
 # Подключаем роутеры к серверу
+app.include_router(router=auth_router, prefix="/api/v1")
+app.include_router(router=users_router, prefix="/api/v1/users")
 app.include_router(router=posts_router, prefix="/api/v1/posts")
-app.include_router(router=users_router, prefix="/api/v1/")
 
 if __name__ == "__main__":
     # Приложение может запускаться командой
